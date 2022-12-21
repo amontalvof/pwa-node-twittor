@@ -122,3 +122,16 @@ postBtn.on('click', function () {
 
     crearMensajeHTML(mensaje, usuario);
 });
+
+// Get server messages
+function getMensajes() {
+    fetch('api')
+        .then((resp) => resp.json())
+        .then((posts) => {
+            console.log(posts);
+            posts.forEach((post) => {
+                crearMensajeHTML(post.mensaje, post.user);
+            });
+        });
+}
+getMensajes();
