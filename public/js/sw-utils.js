@@ -2,7 +2,10 @@
 function actualizaCacheDinamico(dynamicCache, req, res) {
     if (res.ok) {
         return caches.open(dynamicCache).then((cache) => {
-            cache.put(req, res.clone());
+            if (!req.url.includes('chrome-extension')) {
+                //skip request
+                cache.put(req, res.clone());
+            }
 
             return res.clone();
         });
@@ -22,4 +25,20 @@ function actualizaCacheStatico(staticCache, req, APP_SHELL_INMUTABLE) {
             return actualizaCacheDinamico(staticCache, req, res);
         });
     }
+}
+
+// Network with cache fallback / update
+function manejoApiMensajes(cacheName, req) {
+    return fetch(req)
+        .then((res) => {
+            if (res.ok) {
+                actualizaCacheDinamico(cacheName, req, res.clone());
+                return res.clone();
+            } else {
+                return caches.match(req);
+            }
+        })
+        .catch((err) => {
+            return caches.match(req);
+        });
 }

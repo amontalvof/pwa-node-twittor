@@ -22,7 +22,7 @@ const APP_SHELL = [
 const APP_SHELL_INMUTABLE = [
     'https://fonts.googleapis.com/css?family=Quicksand:300,400',
     'https://fonts.googleapis.com/css?family=Lato:400,300',
-    'https://use.fontawesome.com/releases/v5.3.1/css/all.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css',
     'https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css',
     'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js',
 ];
@@ -56,16 +56,29 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-    const respuesta = caches.match(e.request).then((res) => {
-        if (res) {
-            actualizaCacheStatico(STATIC_CACHE, e.request, APP_SHELL_INMUTABLE);
-            return res;
-        } else {
-            return fetch(e.request).then((newRes) => {
-                return actualizaCacheDinamico(DYNAMIC_CACHE, e.request, newRes);
-            });
-        }
-    });
+    let respuesta;
+    if (e.request.url.includes('/api')) {
+        respuesta = manejoApiMensajes(DYNAMIC_CACHE, e.request);
+    } else {
+        respuesta = caches.match(e.request).then((res) => {
+            if (res) {
+                actualizaCacheStatico(
+                    STATIC_CACHE,
+                    e.request,
+                    APP_SHELL_INMUTABLE
+                );
+                return res;
+            } else {
+                return fetch(e.request).then((newRes) => {
+                    return actualizaCacheDinamico(
+                        DYNAMIC_CACHE,
+                        e.request,
+                        newRes
+                    );
+                });
+            }
+        });
+    }
 
     e.respondWith(respuesta);
 });
