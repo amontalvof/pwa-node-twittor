@@ -2,7 +2,7 @@ var url = window.location.href;
 var swLocation = '/twittor/sw.js';
 
 if (navigator.serviceWorker) {
-    if (url.includes('localhost')) {
+    if (url.includes('localhost') || url.includes('127.0.0.1')) {
         swLocation = '/sw.js';
     }
 
@@ -114,11 +114,27 @@ cancelarBtn.on('click', function () {
 
 // Boton de enviar mensaje
 postBtn.on('click', function () {
-    var mensaje = txtMensaje.val();
+    const mensaje = txtMensaje.val();
     if (mensaje.length === 0) {
         cancelarBtn.click();
         return;
     }
+
+    const data = {
+        mensaje,
+        user: usuario,
+    };
+
+    fetch('api', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .then((res) => console.log('app.js', res))
+        .catch((err) => console.log('app.js error', err));
 
     crearMensajeHTML(mensaje, usuario);
 });
