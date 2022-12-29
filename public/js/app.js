@@ -151,3 +151,28 @@ function getMensajes() {
         });
 }
 getMensajes();
+
+// Detectar cambios de conexion
+function isOnline() {
+    if (window.navigator.onLine) {
+        // Estamos online
+        console.log('Online');
+        $.mdtoast('Online', {
+            interaction: true,
+            interactionTimeout: 2000,
+            actionText: 'Ok',
+        });
+    } else {
+        // Estamos offline
+        console.log('Offline');
+        $.mdtoast('Offline', {
+            interaction: true,
+            actionText: 'Ok',
+            type: 'warning',
+        });
+    }
+}
+
+window.addEventListener('online', isOnline);
+window.addEventListener('offline', isOnline);
+isOnline();
