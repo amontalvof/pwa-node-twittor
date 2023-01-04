@@ -176,3 +176,36 @@ function isOnline() {
 window.addEventListener('online', isOnline);
 window.addEventListener('offline', isOnline);
 isOnline();
+
+// Notificaciones
+function enviarNotification() {
+    const notificationOpts = {
+        icon: 'img/icons/icon-72x72.png',
+        body: 'This is the body of the notification.',
+    };
+    const n = new Notification('Hello World!', notificationOpts);
+    n.onclick = () => {
+        console.log('Notification clicked');
+    };
+}
+
+function notificarme() {
+    if (!window.Notification) {
+        console.log('This browser does not support notifications');
+        return;
+    }
+
+    if (Notification.permission === 'granted') {
+        enviarNotification();
+    } else if (
+        Notification.permission !== 'denied' ||
+        Notification.permission === 'default'
+    ) {
+        Notification.requestPermission(function (permission) {
+            if (permission === 'granted') {
+                enviarNotification();
+            }
+        });
+    }
+}
+notificarme();
