@@ -24,6 +24,9 @@ var modalAvatar = $('#modal-avatar');
 var avatarBtns = $('.seleccion-avatar');
 var txtMensaje = $('#txtMensaje');
 
+var btnActivadas = $('.btn-noti-activadas');
+var btnDesactivadas = $('.btn-noti-desactivadas');
+
 // El usuario, contiene el ID del hÃ©roe seleccionado
 var usuario;
 
@@ -178,6 +181,18 @@ window.addEventListener('offline', isOnline);
 isOnline();
 
 // Notificaciones
+function verificaSuscripcion(activadas) {
+    if (activadas) {
+        btnActivadas.removeClass('oculto');
+        btnDesactivadas.addClass('oculto');
+    } else {
+        btnActivadas.addClass('oculto');
+        btnDesactivadas.removeClass('oculto');
+    }
+}
+
+verificaSuscripcion();
+
 function enviarNotification() {
     const notificationOpts = {
         icon: 'img/icons/icon-72x72.png',
@@ -208,4 +223,4 @@ function notificarme() {
         });
     }
 }
-notificarme();
+// notificarme();
