@@ -31,4 +31,22 @@ router.post('/', function (req, res) {
     res.json({ ok: true, mensaje });
 });
 
+// Almacenar suscripciones
+router.post('/subscribe', (req, res) => {
+    res.json('subscribe');
+});
+
+// Obtener llave pública
+router.get('/key', (req, res) => {
+    res.json('key publico');
+});
+
+// Enviar notificación push
+// Es algo que se hace desde el servidor
+// No se expone en la API
+// Esta asi ahora para poder acceder desde postman
+router.post('/push', (req, res) => {
+    res.json('push');
+});
+
 module.exports = router;
