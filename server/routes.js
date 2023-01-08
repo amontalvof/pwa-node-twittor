@@ -28,7 +28,6 @@ router.post('/', function (req, res) {
         user: req.body.user,
     };
     mensajes.push(mensaje);
-    console.log(mensajes);
     res.json({ ok: true, mensaje });
 });
 
@@ -40,7 +39,7 @@ router.post('/subscribe', (req, res) => {
 // Obtener llave pública
 router.get('/key', (req, res) => {
     const key = push.getKey();
-    res.json(key);
+    res.send(key);
 });
 
 // Enviar notificación push

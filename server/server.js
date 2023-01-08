@@ -30,5 +30,5 @@ app.use('/api', routes);
 app.listen(port, (err) => {
     if (err) throw new Error(err);
 
-    console.log(`Servidor corriendo en puerto ${port}`);
+    console.log(`Server running on port ${port}`);
 });

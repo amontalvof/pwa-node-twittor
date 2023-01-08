@@ -147,7 +147,6 @@ function getMensajes() {
     fetch('api')
         .then((resp) => resp.json())
         .then((posts) => {
-            console.log(posts);
             posts.forEach((post) => {
                 crearMensajeHTML(post.mensaje, post.user);
             });
@@ -159,7 +158,6 @@ getMensajes();
 function isOnline() {
     if (window.navigator.onLine) {
         // Estamos online
-        console.log('Online');
         $.mdtoast('Online', {
             interaction: true,
             interactionTimeout: 2000,
@@ -167,7 +165,6 @@ function isOnline() {
         });
     } else {
         // Estamos offline
-        console.log('Offline');
         $.mdtoast('Offline', {
             interaction: true,
             actionText: 'Ok',
@@ -206,7 +203,6 @@ function enviarNotification() {
 
 function notificarme() {
     if (!window.Notification) {
-        console.log('This browser does not support notifications');
         return;
     }
 
@@ -224,3 +220,11 @@ function notificarme() {
     }
 }
 // notificarme();
+
+// Get Key
+function getPublicKey() {
+    return fetch('api/key')
+        .then((res) => res.arrayBuffer())
+        .then((key) => new Uint8Array(key));
+}
+getPublicKey().then((key) => console.log(key));
