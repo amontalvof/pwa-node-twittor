@@ -1,12 +1,18 @@
 var url = window.location.href;
 var swLocation = '/twittor/sw.js';
+var swReg;
 
 if (navigator.serviceWorker) {
     if (url.includes('localhost') || url.includes('127.0.0.1')) {
         swLocation = '/sw.js';
     }
 
-    navigator.serviceWorker.register(swLocation);
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register(swLocation).then(function (reg) {
+            swReg = reg;
+            swReg.pushManager.getSubscription().then(verificaSuscripcion);
+        });
+    });
 }
 
 // Referencias de jQuery
@@ -188,8 +194,6 @@ function verificaSuscripcion(activadas) {
     }
 }
 
-verificaSuscripcion();
-
 function enviarNotification() {
     const notificationOpts = {
         icon: 'img/icons/icon-72x72.png',
@@ -227,4 +231,21 @@ function getPublicKey() {
         .then((res) => res.arrayBuffer())
         .then((key) => new Uint8Array(key));
 }
-getPublicKey().then((key) => console.log(key));
+
+btnDesactivadas.on('click', function () {
+    if (!swReg) {
+        return console.log('No hay registro de SW');
+    }
+    getPublicKey().then((key) => {
+        swReg.pushManager
+            .subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: key,
+            })
+            .then((res) => res.toJSON())
+            .then((sub) => {
+                console.log(sub);
+                verificaSuscripcion(sub);
+            });
+    });
+});
