@@ -2,7 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const database = require('./db');
 
+database.loadDatabase();
 const app = express();
 
 const publicPath = path.resolve(__dirname, '../public');
