@@ -1,5 +1,6 @@
 var url = window.location.href;
-var swLocation = '/twittor/sw.js';
+// var swLocation = '/twittor/sw.js';
+var swLocation = '/sw.js';
 var swReg;
 
 if (navigator.serviceWorker) {
