@@ -12,7 +12,7 @@ const mensajes = [
     {
         _id: 'YYY',
         user: 'ironman',
-        mensaje: 'lorem ipsum',
+        mensaje: 'Lorem Ipsum',
     },
 ];
 
@@ -28,11 +28,19 @@ router.post('/', function (req, res) {
         user: req.body.user,
     };
     mensajes.push(mensaje);
+    const post = {
+        title: `New message from ${mensaje.user}`,
+        body: mensaje.mensaje,
+        user: mensaje.user,
+    };
+    push.sendPush(post);
     res.json({ ok: true, mensaje });
 });
 
 // Almacenar suscripciones
 router.post('/subscribe', (req, res) => {
+    const suscripcion = req.body;
+    push.addSubscription(suscripcion);
     res.json('subscribe');
 });
 
@@ -46,8 +54,14 @@ router.get('/key', (req, res) => {
 // Es algo que se hace desde el servidor
 // No se expone en la API
 // Esta asi ahora para poder acceder desde postman
-router.post('/push', (req, res) => {
-    res.json('push');
-});
+// router.post('/push', (req, res) => {
+//     const post = {
+//         title: req.body.title,
+//         body: req.body.body,
+//         user: req.body.user,
+//     };
+//     push.sendPush(post);
+//     res.json(post);
+// });
 
 module.exports = router;

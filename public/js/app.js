@@ -133,7 +133,6 @@ postBtn.on('click', function () {
         mensaje,
         user: usuario,
     };
-
     fetch('api', {
         method: 'POST',
         headers: {
@@ -142,8 +141,7 @@ postBtn.on('click', function () {
         body: JSON.stringify(data),
     })
         .then((res) => res.json())
-        .then((res) => console.log('app.js', res))
-        .catch((err) => console.log('app.js error', err));
+        .catch((err) => console.error('Error', err));
 
     crearMensajeHTML(mensaje, usuario);
 });
@@ -194,35 +192,35 @@ function verificaSuscripcion(activadas) {
     }
 }
 
-function enviarNotification() {
-    const notificationOpts = {
-        icon: 'img/icons/icon-72x72.png',
-        body: 'This is the body of the notification.',
-    };
-    const n = new Notification('Hello World!', notificationOpts);
-    n.onclick = () => {
-        console.log('Notification clicked');
-    };
-}
+// function enviarNotification() {
+//     const notificationOpts = {
+//         icon: 'img/icons/icon-72x72.png',
+//         body: 'This is the body of the notification.',
+//     };
+//     const n = new Notification('Hello World!', notificationOpts);
+//     n.onclick = () => {
+//         console.log('Notification clicked');
+//     };
+// }
 
-function notificarme() {
-    if (!window.Notification) {
-        return;
-    }
+// function notificarme() {
+//     if (!window.Notification) {
+//         return;
+//     }
 
-    if (Notification.permission === 'granted') {
-        enviarNotification();
-    } else if (
-        Notification.permission !== 'denied' ||
-        Notification.permission === 'default'
-    ) {
-        Notification.requestPermission(function (permission) {
-            if (permission === 'granted') {
-                enviarNotification();
-            }
-        });
-    }
-}
+//     if (Notification.permission === 'granted') {
+//         enviarNotification();
+//     } else if (
+//         Notification.permission !== 'denied' ||
+//         Notification.permission === 'default'
+//     ) {
+//         Notification.requestPermission(function (permission) {
+//             if (permission === 'granted') {
+//                 enviarNotification();
+//             }
+//         });
+//     }
+// }
 // notificarme();
 
 // Get Key
@@ -234,7 +232,7 @@ function getPublicKey() {
 
 btnDesactivadas.on('click', function () {
     if (!swReg) {
-        return console.log('No hay registro de SW');
+        return console.log('The SW is not registered');
     }
     getPublicKey().then((key) => {
         swReg.pushManager
@@ -244,8 +242,27 @@ btnDesactivadas.on('click', function () {
             })
             .then((res) => res.toJSON())
             .then((sub) => {
-                console.log(sub);
-                verificaSuscripcion(sub);
+                fetch('api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sub),
+                })
+                    .then(verificaSuscripcion)
+                    .catch(cancelarSuscripcion);
             });
     });
+});
+
+function cancelarSuscripcion() {
+    swReg.pushManager
+        .getSubscription()
+        .then((sub) =>
+            sub.unsubscribe().then(() => verificaSuscripcion(false))
+        );
+}
+
+btnActivadas.on('click', function () {
+    cancelarSuscripcion();
 });

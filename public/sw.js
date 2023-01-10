@@ -95,3 +95,53 @@ self.addEventListener('sync', (e) => {
         e.waitUntil(respuesta);
     }
 });
+
+// Listen push
+self.addEventListener('push', (e) => {
+    const data = JSON.parse(e.data.text());
+    const title = data.title;
+    const options = {
+        body: data.body,
+        // icon: `img/icons/icon-72x72.png`,
+        icon: `img/avatars/${data.user}.jpg`,
+        badge: 'img/favicon.ico',
+        // image: 'https://datainfox.com/wp-content/uploads/2017/10/avengers-tower.jpg',
+        vibrate: [
+            125, 75, 125, 275, 200, 275, 125, 75, 125, 275, 200, 600, 200, 600,
+        ],
+        openUrl: '/',
+        data: {
+            url: '/',
+            id: data.user,
+        },
+        // actions: [
+        //     {
+        //         action: 'thor-action',
+        //         title: 'Thor',
+        //         icon: 'img/avatars/thor.jpg',
+        //     },
+        // ],
+    };
+    e.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclose', (e) => {
+    console.log('Notification closed', e);
+});
+
+self.addEventListener('notificationclick', (e) => {
+    const notificacion = e.notification;
+    // const accion = e.action;
+    // console.log({ notificacion, accion });
+    const resp = clients.matchAll().then((c) => {
+        let cliente = c.find((i) => i.visibilityState === 'visible');
+        if (cliente !== undefined) {
+            cliente.navigate(notificacion.data.url);
+            cliente.focus();
+        } else {
+            clients.openWindow(notificacion.data.url);
+        }
+        return notificacion.close();
+    });
+    e.waitUntil(resp);
+});
